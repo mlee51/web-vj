@@ -1,0 +1,18 @@
+{
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "eslint.validate": ["javascript"],
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#1F3318",
+    "titleBar.activeBackground": "#2B4722",
+    "titleBar.activeForeground": "#F7FBF6"
+  }
+}
