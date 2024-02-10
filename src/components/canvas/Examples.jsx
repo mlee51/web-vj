@@ -66,7 +66,6 @@ export function Duck(props) {
 export function Dog(props) {
   const model = useRef()
   const { scene } = useGLTF('/statue.glb')
-  console.log(scene.children[0].geometry)
   const config = useControls({
     meshPhysicalMaterial: false,
     transmissionSampler: false,
