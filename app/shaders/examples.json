@@ -1,0 +1,28 @@
+{
+    "examples": [
+        {
+            "name": "Rainbow Box Gradient",
+            "fragmentShader": "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform float u_time;\nvarying vec2 vUv;\n\n// Perlin noise functions\nfloat hash(float n) {\n    return fract(sin(n) * 43758.5453123);\n}\n\nfloat noise(vec2 p) {\n    vec2 i = floor(p);\n    vec2 f = fract(p);\n\n    vec2 u = f * f * (3.0 - 2.0 * f);\n\n    return mix(mix(hash(i.x + i.y * 57.0), hash(i.x + 1.0 + i.y * 57.0), u.x), mix(hash(i.x + (i.y + 1.0) * 57.0), hash(i.x + 1.0 + (i.y + 1.0) * 57.0), u.x), u.y);\n}\n\nvec3 hueShift(vec3 color, float hue) {\n    const vec3 k = vec3(0.57735, 0.57735, 0.57735);\n    float cosAngle = cos(hue);\n    return vec3(color * cosAngle + cross(k, color) * sin(hue) + k * dot(k, color) * (1.0 - cosAngle));\n}\n\nvec3 rainbow(float distance, float u_time) {\n    float t = distance * 0.2 * 3.14;\n    float timeFactor = 0.1;\n    t += u_time * timeFactor;\n    vec3 color = 0.5 + 0.5 * cos(6.28318 * (t + vec3(0.0, 0.4, 0.57)));\n    color = hueShift(color, distance);\n    return color;\n}\n\nfloat chebDistance(float n, vec2 p0, vec2 p1) {\n    float distance = pow(pow(p0.x - p1.x, n) + pow(p0.y - p1.y, n), 1.0 / n);\n    return distance;\n}\n\nvoid main() {\n    float distance = chebDistance(6.0, vec2(0.5), vec2(vUv));\n    gl_FragColor = vec4(rainbow(distance, -u_time), 1.0);\n}"
+        },
+        {
+            "name": "Default",
+            "fragmentShader": "#ifdef GL_ES\nprecision highp float;\n#endif\n\nuniform float u_time;\nvarying vec2 vUv;\n\nvoid main() {\n    vec3 st = vec3(fract(vUv.y+u_time));\n    gl_FragColor = vec4(st, 1.0);\n}"
+        },
+        {
+            "name": "Checkerboard",
+            "fragmentShader": "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform float u_time;\nvarying vec2 vUv;\n\nvoid main() {\n    float Size = 10.0;\n    vec2 uv = vUv * vec2(100.,50.);\n    vec2 Pos = floor(uv / Size);\n    float PatternMask = mod(Pos.x + mod(Pos.y, 2.0), 2.0);\n    gl_FragColor = PatternMask * vec4(1.0, 1.0, 1.0, 1.0);\n}"
+        },
+        {
+            "name": "Gradient Checkerboard",
+            "fragmentShader": "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform float u_time;\nvarying vec2 vUv;\n\nvoid main() {\n    vec2 uv = vUv * vec2(200.,100.);\n    float dist = fract(floor(u_time+distance(uv,vec2(.0)))*100./7.);\n    float Size = 10.;\n    vec2 Pos = floor( uv / Size);\n    float PatternMask = mod(Pos.x + mod(Pos.y+fract(ceil(u_time*100.)/7.), 3.0*fract(u_time*0.13)), 2.7);\n    vec3 color =  vec3(0.67, 0.2, 0.08);\n    gl_FragColor = vec4(PatternMask * color,1.0);\n}"
+        },
+        {
+            "name": "Gradient Checkerboard 2",
+            "fragmentShader": "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform float u_time;\nvarying vec2 vUv;\n\nvoid main() {\n    vec2 uv = vUv * vec2(200.,100.);\n    float dist = fract(floor(u_time+distance(uv,vec2(.0)))*100./7.);\n    float Size = 6.25;\n    vec2 Pos = floor( uv / Size);\n    float PatternMask = mod(Pos.x + mod(Pos.y+fract(ceil(u_time*100.)/7.), 3.0*fract(u_time*0.13)), 2.+abs(sin(u_time)));\n    vec3 color =  vec3(0.02, 0.4, 0.38);\n    gl_FragColor = vec4(PatternMask * color.rgb,1.0);\n}"
+        },
+        {
+            "name": "Gradient Checkerboard 3",
+            "fragmentShader": "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform float u_time;\nvarying vec2 vUv;\n\nvoid main() {\n    // Adjust UV coordinates to create a ripple effect\n    vec2 uv = vUv * vec2(200., 100.);\n    uv += vec2(sin(u_time * 0.1) * 0.05, cos(u_time * 0.1) * 0.05); // Create gentle ripples\n    \n    // Calculate a dynamic pattern based on time and UV coordinates\n    float dist = fract(floor(u_time + distance(uv, vec2(0.))) * 100. / 7.);\n    float Size = 50.;\n    vec2 Pos = floor(uv / Size);\n    float PatternMask = mod(Pos.x + mod(Pos.y + fract(ceil(u_time * 100.) / 7.), 3.0 * fract(u_time * 0.13)), 2. + abs(sin(u_time)));\n    \n    // Add a dynamic color effect with a shifting gradient\n    vec3 color = vec3(0.5 + 0.5 * sin(u_time * 0.5), 0.5 + 0.5 * cos(u_time * 0.7), 0.5 + 0.5 * sin(u_time * 0.3));\n    \n    // Introduce a glowing effect based on distance from the center\n    float glowFactor = smoothstep(0.0, 0.5, distance(uv, vec2(0.5))); // Adjust the range and falloff of the glow\n    color += vec3(0.1, 0.2, 0.3) * glowFactor; // Add a soft glow\n    \n    // Apply the pattern mask to the color and output\n    gl_FragColor = vec4(PatternMask * color.rgb * 0.6, 1.0);\n}"
+        }
+    ]
+}

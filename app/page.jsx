@@ -12,6 +12,7 @@ import "ace-builds/src-noconflict/snippets/glsl";
 import fragmentShader from './shaders/fragmentShader.glsl'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import Shaders from './shaders'
 
 
 const Logo = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Logo), { ssr: false })
@@ -78,7 +79,10 @@ export default function Page() {
         collapsed // default = false, when true the GUI is collpased
         hidden // default = false, when true the GUI is hidden
       />
-      <button onClick={toggleEditor} className={`fixed z-30 h-8 w-8 top-0 right-0 mt-4 mr-4 opacity-15 rounded-lg ${editor ? 'border' : 'hover:border'}`} />
+      <div className="fixed z-30 flex gap-4 top-0 right-0 mt-4 mr-4">
+        <Shaders className={editor ? 'opacity-20' : 'opacity-0'} onSelect={onChange} />
+        <button onClick={toggleEditor} className={`h-8 w-8 opacity-15 rounded-lg ${editor ? 'border' : 'hover:border'}`} />
+      </div>
       <div className='relative  h-full w-full bg-black'>
         <View orbit className='relative  h-full w-full '>
           <Suspense fallback={null}>
