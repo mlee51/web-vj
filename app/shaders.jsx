@@ -1,12 +1,12 @@
 import fragmentShader from './shaders/fragmentShader.glsl'
 import shaderExamples from './shaders/examples.json'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 const Shaders = ({ className, onSelect }) => {
     const [selectedExample, setSelectedExample] = useState(null);
 
-    const handleExampleChange = (event) => {
+    const handleExampleChange = useCallback((event) => {
         setSelectedExample(event.target.value);
-    };
+    }, []);
 
     useEffect(() => {
         if (selectedExample !== null) onSelect(selectedExample)

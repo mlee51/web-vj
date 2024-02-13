@@ -13,6 +13,8 @@ import fragmentShader from './shaders/fragmentShader.glsl'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import Shaders from './shaders'
+import World from './World'
+
 
 
 const Logo = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Logo), { ssr: false })
@@ -40,28 +42,29 @@ const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mo
 export default function Page() {
   const [shader, setShader] = useState(fragmentShader)
   const [editor, setEditor] = useState(true)
-  const onChange = (newCode) => {
+  const onChange = useCallback((newCode) => {
     setShader(newCode);
-  };
+  }, []);
 
   const toggleEditor = useCallback(() => {
     setEditor(prev => !prev)
   }, []);
 
 
-
   return (
     <>
-      {editor && <>
-        <ToastContainer
-          autoClose={false}
-        />
+
+      <ToastContainer
+        autoClose={false}
+      />
+      {editor &&
         <AceEditor
           mode="glsl"
           value={shader}
-          className="fixed z-20 bg-transparent"
+          className='fixed z-20 bg-[rgba(11,11,11,0.17)]'
           theme="gruvbox_dark_hard"
           onChange={onChange}
+          fontSize={14}
           name="UNIQUE_ID_OF_DIV"
           editorProps={{ $blockScrolling: true }}
           enableBasicAutocompletion={true}
@@ -70,7 +73,7 @@ export default function Page() {
           showPrintMargin={false}
           width="100%"
           height="100%"
-        /></>}
+        />}
       <Leva
         fill // default = false,  true makes the pane fill the parent dom node it's rendered in
         flat // default = false,  true removes border radius and shadow
@@ -79,34 +82,11 @@ export default function Page() {
         collapsed // default = false, when true the GUI is collpased
         hidden // default = false, when true the GUI is hidden
       />
-      <div className="fixed z-30 flex gap-4 top-0 right-0 mt-4 mr-4">
+      <div className={`fixed z-30 flex gap-4 top-0 right-0 mt-4 mr-4 ${!editor && 'opacity-0'} hover:opacity-100`}>
         <Shaders className={editor ? 'opacity-20' : 'opacity-0'} onSelect={onChange} />
-        <button onClick={toggleEditor} className={`h-8 w-8 opacity-15 rounded-lg ${editor ? 'border' : 'hover:border'}`} />
+        <button title='Presentation Mode' onClick={toggleEditor} className={`h-8 w-8 opacity-15 rounded-lg border`} />
       </div>
-      <div className='relative  h-full w-full bg-black'>
-        <View orbit className='relative  h-full w-full '>
-          <Suspense fallback={null}>
-            <Screen fragmentShader={shader} />
-            <Dog scale={1} position={[0, 0, 0]} rotation={[0.0, 0.0, 0]} />
-            <mesh position={[0, -1.6, 0]} rotation={[-Math.PI * 0.5, 0, 0]}>
-              <planeGeometry args={[100, 100]} />
-              <MeshReflectorMaterial
-                blur={[800, 200]}
-                resolution={2048}
-                mixBlur={1}
-                mixStrength={100}
-                depthScale={1}
-                minDepthThreshold={0.85}
-                color="#151515"
-                metalness={0.1}
-                roughness={1}
-                mirror={0.5}
-              />
-            </mesh>
-            <Common color={'#17171b'} />
-          </Suspense>
-        </View>
-      </div>
+      <World shader={shader} />
     </>
   )
 }
