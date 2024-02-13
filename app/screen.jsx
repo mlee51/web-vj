@@ -6,6 +6,7 @@ import { Color } from "three";
 import { useThree } from '@react-three/fiber'
 import { toast } from 'react-toastify';
 
+
 const validateGLSL = (gl, code, toastId) => {
     const shader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(shader, code);
@@ -33,7 +34,9 @@ const Screen = ({ fragmentShader }) => {
 
 
     useEffect(() => {
-        if (validateGLSL(canvas, fragmentShader, toastId) === true) { setRawShader(fragmentShader) }
+        if (validateGLSL(canvas, fragmentShader, toastId) === true) {
+            setRawShader(fragmentShader)
+        }
     }, [fragmentShader])
 
 
