@@ -39,7 +39,15 @@ float chebDistance(float n, vec2 p0, vec2 p1) {
     return distance;
 }
 
+vec3 hue(vec3 color, float hue) {
+    const vec3 k = vec3(0.57735, 0.57735, 0.57735);
+    float cosAngle = cos(hue);
+    return vec3(color * cosAngle + cross(k, color) * sin(hue) + k * dot(k, color) * (1.0 - cosAngle));
+}
+
 void main() {
     float distance = chebDistance(6.0, vec2(0.5), vec2(vUv));
-    gl_FragColor = vec4(rainbow(distance, -u_time), 1.0);
+    vec3 color = rainbow(distance, -u_time);
+    color = hue(color, u_time);
+    gl_FragColor = vec4(color, 1.0);
 }
